@@ -10,23 +10,24 @@ class GeneticAlgorithmEngineController {
 
   }
 
-  List<Gene> get population => _engine.currentPopulation;
-  List<Gene> get newPopulation => _engine.newPopulation;
+  Population get population => _engine.currentPopulation;
+  Population get newPopulation => _engine.newPopulation;
   Random get random => _engine.random;
 
-  void addGene(Gene toAdd) {
-    _engine.newPopulation.add(toAdd);
+  void addToPopulation(Population toAdd) {
+    _engine.newPopulation = _engine.newPopulation.appendAll(toAdd);
   }
 
-  void removeGene(Gene toRemove) {
-    _engine.newPopulation.remove(toRemove);
+  void removeFromPopulation(Population toRemove) {
+    _engine.newPopulation = _engine.newPopulation.removeAll(toRemove);
   }
 
-  void setPopulation(List<Gene> toSet) {
+  void setPopulation(Population toSet) {
     _engine.newPopulation = toSet;
   }
 
-  void recombinate(List<Gene> parents, Gene newGene) {
-    // TODO: Implement
+  void recombinate(Population parents, Population newGenes) {
+    // TODO: Implement parent markup
+    _engine.newPopulation = _engine.newPopulation.appendAll(newGenes);
   }
 }

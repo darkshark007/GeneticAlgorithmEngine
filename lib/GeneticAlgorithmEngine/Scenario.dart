@@ -7,21 +7,19 @@ abstract class Scenario {
 
   Random random;
 
-  List<TaskOperation> initializationTasks;
-  List<TaskOperation> iterationTasks;
-  List<TaskOperation> completionTasks;
-
+  TaskRunner initializationTasks;
+  TaskRunner iterationTasks;
+  TaskRunner completionTasks;
 
   Scenario(this.random);
 
-  TaskConditional iterationConditional = (_) => true;
+  bool shouldIterate(GeneticAlgorithmEngineController controller) => false;
 
   Future willPerformIteration(GeneticAlgorithmEngineController controller) async { }
 
   Future didPerformIteration(GeneticAlgorithmEngineController controller) async { }
 
-  Gene recombinate(Random random, List<Gene> genes);
+  Population recombinate(Random random, Population genes);
 }
 
-typedef GeneGenerator = Gene Function();
-typedef GeneRecombinator = Gene Function(Random random, List<Gene> gene);
+typedef TaskRunner = void Function(GeneticAlgorithmEngineController controller);

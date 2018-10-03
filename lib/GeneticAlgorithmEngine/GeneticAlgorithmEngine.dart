@@ -8,9 +8,9 @@ class GeneticAlgorithmEngine {
   Random random;
   Scenario scenario;
   GeneticAlgorithmEngineController controller;
-  List<Gene> currentPopulation = [];
-  List<Gene> newPopulation = [];
-  List<List<Gene>> iterations = [];
+  Population currentPopulation = new Population();
+  Population newPopulation = new Population();
+  List<Population> iterations = [];
 
 
   GeneticAlgorithmEngine(this.random, this.scenario) {
@@ -19,42 +19,41 @@ class GeneticAlgorithmEngine {
 
   Future run() async {
     // Init
-    newPopulation = [];
-    currentPopulation = [];
-    scenario.initializationTasks.forEach((TaskOperation task) {
-      task(controller, controller.population);
-    });
+    newPopulation = new Population();
+    currentPopulation = new Population();
+    print("Initializing...");
+    if (scenario.initializationTasks != null) {
+      scenario.initializationTasks(controller);
+    }
     print("Finished Initialization");
     rollIteration();
 
     // Loop
-    while (!scenario.iterationConditional(controller)) {
+    while (scenario.shouldIterate(controller)) {
 
-      print('Iteration  cp: ${currentPopulation.length}  np: ${newPopulation.length}');
-      
+      print('Iteration #${iterations.length}\n  cp: ${currentPopulation.population.length}\n  np: ${newPopulation.population.length}');
 
       await scenario.willPerformIteration(controller);
 
-      scenario.iterationTasks.forEach((TaskOperation task) {
-        task(controller, controller.population);
-      });
+      if (scenario.iterationTasks != null) {
+        scenario.iterationTasks(controller);
+      }
       rollIteration();
 
       await scenario.didPerformIteration(controller);
     }
 
     // Clean up
-    scenario.completionTasks.forEach((TaskOperation task) {
-      task(controller, controller.population);
-    });
+    if (scenario.completionTasks != null) {
+      scenario.completionTasks(controller);
+    }
     rollIteration();
-
   }
 
   void rollIteration() {
     currentPopulation = newPopulation;
     iterations.add(currentPopulation);
-    newPopulation = [];
+    newPopulation = new Population();
   }
 
 }

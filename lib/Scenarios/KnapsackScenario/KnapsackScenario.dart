@@ -13,42 +13,73 @@ class KnapsackScenario extends Scenario {
   int capacity;
 
   KnapsackScenario(Random r, this.itemsList, this.capacity) : super(r) {
-    initializationTasks = [
-      Ops.repeat(Conditions.thisManyTimes(25), 
-        Ops.generateNewGene(this.generateGene, 
-        Ops.addToPopulation())),
-      Ops.repeat(Conditions.thisManyTimes(5), 
-        Ops.generateNewGene(this.generateGene, 
-        Ops.addToPopulation())),
-      Ops.repeat(Conditions.thisManyTimes(5), 
-        Ops.generateNewGene(this.generateGene, 
-        Ops.addToPopulation())),
-      Ops.repeat(Conditions.thisManyTimes(5), 
-        Ops.generateNewGene(this.generateGene, 
-        Ops.addToPopulation())),
-      Ops.repeat(Conditions.untilPopulationSizeIncreasesTo(100), 
-        Ops.generateNewGene(this.generateGene, Ops.addToPopulation()))
-    ];
-    iterationTasks = [
-      Ops.sortByValue(
-        Ops.getTop(150, Ops.addToPopulation())),
-      Ops.sortByValue(
-        Ops.getTop(250, 
-        Ops.repeat(Conditions.thisManyTimes(20), 
-          Ops.randomlySelect(2, 
-          Ops.recombinate(this.recombinate, 
-          Ops.addToPopulation()))))),
-      Ops.repeat(Conditions.thisManyTimes(100),
-        Ops.generateNewGene(this.generateGene, Ops.addToPopulation())),
-    ];
-    completionTasks = [
-      Ops.addToPopulation(),
-      // Ops.sortByValue(Ops.getTop(10, Ops.setAsPopulation())),
-      // Ops.repeat(Conditions.thisManyTimes(5), 
-      //   Ops.generateNewGene(this.generateGene, Ops.addToPopulation())),
-    ];
+    initializationTasks = initFunc;
+    iterationTasks = iterFunc;
 
-    iterationConditional = Conditions.thisManyTimes(500);
+    completionTasks = completionFunc;
+  }
+
+  var _iterations = 0;
+  @override
+  bool shouldIterate(GeneticAlgorithmEngineController controller) {
+    _iterations++;
+    return _iterations <= 50;
+
+  }
+
+  void initFunc(GeneticAlgorithmEngineController controller) {
+
+    // Add 25
+    var newPop = new Population();
+    for (var i = 0; i < 25; i++) {
+      newPop.population.add(this.generateGene());
+    }
+    controller.addToPopulation(newPop);
+
+    // Add 5
+    var newPop2 = new Population();
+    for (var i = 0; i < 5; i++) {
+      newPop2.population.add(this.generateGene());
+    }
+    controller.addToPopulation(newPop2);
+
+    // Add until 100
+    var newPop3 = new Population();
+    while (controller.newPopulation.population.length + newPop3.population.length < 100) {
+      newPop3.population.add(this.generateGene());
+    }
+    controller.addToPopulation(newPop3);
+
+  }
+
+  void iterFunc(GeneticAlgorithmEngineController controller) {
+
+    // Sort
+    var sortedPopulation = controller.population.sortByEvaluation();
+
+    // Add top 150
+    var topPopulation = sortedPopulation.getTop(150);
+    controller.addToPopulation(topPopulation);
+
+    // Add Recombinations
+    topPopulation = sortedPopulation.getTop(250);
+    for (var i = 0; i < 20; i++) {
+      var randPop = topPopulation.randomlySelect(2, random);
+      var recomPop = this.recombinate(random, randPop);
+      controller.recombinate(randPop, recomPop);
+    }
+
+    // Add new genes
+    var newPop = new Population();
+    for (var i = 0; i < 100; i++) {
+      newPop.population.add(this.generateGene());
+    }
+    controller.addToPopulation(newPop);
+  }
+
+  void completionFunc(GeneticAlgorithmEngineController controller) {
+    // Propagate population
+    controller.addToPopulation(controller.population);
   }
 
   KnapsackGene generateGene() {
@@ -73,11 +104,11 @@ class KnapsackScenario extends Scenario {
   }
 
   @override
-  KnapsackGene recombinate(Random random, List<Gene> genes) {
+  Population recombinate(Random random, Population genes) {
 
     Set<KnapsackItem> itemSet = new Set();
 
-    genes.forEach((Gene g) {
+    genes.population.forEach((Gene g) {
       if (g is KnapsackGene) {
         itemSet.addAll(g.sack.items);
       }
@@ -102,7 +133,9 @@ class KnapsackScenario extends Scenario {
       idx = 0;
       sack.items.add(tempItem);
     } while (idx < maxLoops);
-    return new KnapsackGene(sack);
+    var newPop = new Population();
+    newPop.population.add(new KnapsackGene(sack));
+    return newPop;
   }
 }
 

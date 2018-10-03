@@ -42,9 +42,9 @@ main(List<String> arguments) async {
 
   await engine.run();
 
-  print(engine.currentPopulation.length);
+  print(engine.currentPopulation.population.length);
 
-  engine.currentPopulation.forEach((Gene item) {
+  engine.currentPopulation.population.forEach((Gene item) {
     if (item is KnapsackGene) {
       print('>> Gene:   eval: ${item.evaluate()}   length: ${item.sack.items.length}');
       item.sack.items.sort((KnapsackItem a, KnapsackItem b) {
