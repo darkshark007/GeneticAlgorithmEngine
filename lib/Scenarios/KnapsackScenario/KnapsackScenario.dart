@@ -35,8 +35,8 @@ class KnapsackScenario extends Scenario {
       Ops.sortByValue(
         Ops.getTop(250, 
         Ops.repeat(Conditions.thisManyTimes(20), 
-          Ops.randomlySelect(2, r, 
-          Ops.recombinate(r, this.recombinate, 
+          Ops.randomlySelect(2, 
+          Ops.recombinate(this.recombinate, 
           Ops.addToPopulation()))))),
       Ops.repeat(Conditions.thisManyTimes(100),
         Ops.generateNewGene(this.generateGene, Ops.addToPopulation())),

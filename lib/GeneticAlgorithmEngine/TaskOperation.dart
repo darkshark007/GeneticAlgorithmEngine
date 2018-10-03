@@ -1,5 +1,3 @@
-import 'dart:math' show Random;
-
 import "package:GeneticAlgorithmEngine/GeneticAlgorithmEngine.dart";
 
 
@@ -66,12 +64,12 @@ class Ops {
     return func;
   }
 
-  static TaskOperation randomlySelect(int n, Random r, TaskOperation operation) {
+  static TaskOperation randomlySelect(int n, TaskOperation operation) {
     void func(GeneticAlgorithmEngineController controller, List<Gene> population) {
       List<Gene> newPopulation = [];
 
       while (newPopulation.length < n) {
-        Gene tempGene = population[r.nextInt(population.length)];
+        Gene tempGene = population[controller.random.nextInt(population.length)];
         if (newPopulation.contains(tempGene)) {
           continue;
         }
@@ -124,9 +122,9 @@ class Ops {
     return func;
   }
 
-  static TaskOperation recombinate(Random r, GeneRecombinator recombinator, TaskOperation operation) {
+  static TaskOperation recombinate(GeneRecombinator recombinator, TaskOperation operation) {
     void func(GeneticAlgorithmEngineController controller, List<Gene> population) {
-      Gene newGene = recombinator(r, population);
+      Gene newGene = recombinator(controller.random, population);
       controller.recombinate(population, newGene);
     }
     return func;

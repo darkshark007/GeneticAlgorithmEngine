@@ -1,3 +1,5 @@
+import 'dart:math' show Random;
+
 import 'package:GeneticAlgorithmEngine/GeneticAlgorithmEngine.dart';
 
 class GeneticAlgorithmEngineController {
@@ -10,6 +12,7 @@ class GeneticAlgorithmEngineController {
 
   List<Gene> get population => _engine.currentPopulation;
   List<Gene> get newPopulation => _engine.newPopulation;
+  Random get random => _engine.random;
 
   void addGene(Gene toAdd) {
     _engine.newPopulation.add(toAdd);
