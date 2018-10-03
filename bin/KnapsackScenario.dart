@@ -4,7 +4,7 @@ import 'package:GeneticAlgorithmEngine/GeneticAlgorithmEngine.dart';
 import 'package:GeneticAlgorithmEngine/Scenarios/KnapsackScenario.dart';
 
 main(List<String> arguments) async {
-  print('Hello world !');
+  print('Running Knapsack Scenario Analysis');
 
   Random r = new Random();
 
