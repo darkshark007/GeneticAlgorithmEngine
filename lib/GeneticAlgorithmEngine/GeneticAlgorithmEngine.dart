@@ -31,7 +31,7 @@ class GeneticAlgorithmEngine {
     // Loop
     while (scenario.shouldIterate(controller)) {
 
-      print('Iteration #${iterations.length}\n  cp: ${currentPopulation.population.length}\n  np: ${newPopulation.population.length}');
+      // print('Iteration #${iterations.length}\n  cp: ${currentPopulation.population.length}\n  np: ${newPopulation.population.length}');
 
       await scenario.willPerformIteration(controller);
 

@@ -24,6 +24,18 @@ class Population<T extends Gene> {
     return newPop;
   }
 
+  Population removeDuplicates() {
+    var newPop = _copyPopulation();
+    var returnPop = new Population();
+
+    while (newPop.population.isNotEmpty) {
+      var currentItem = newPop.population.first;
+      returnPop.population.add(currentItem);
+      newPop.population.removeWhere((Gene a) => a == currentItem);
+    }
+    return returnPop;
+  }
+
   Population sortByEvaluation() {
     var newPop = _copyPopulation();
     newPop.population.sort((Gene a, Gene b) {

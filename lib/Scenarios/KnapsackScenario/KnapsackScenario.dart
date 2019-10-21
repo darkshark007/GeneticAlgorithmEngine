@@ -11,8 +11,14 @@ class KnapsackScenario extends Scenario {
 
   List<KnapsackItem> itemsList;
   int capacity;
+  int maxIterations;
 
-  KnapsackScenario(Random r, this.itemsList, this.capacity) : super(r) {
+  KnapsackScenario(
+    Random r, 
+    this.itemsList, 
+    this.capacity, {
+    this.maxIterations
+  }) : super(r) {
     initializationTasks = initFunc;
     iterationTasks = iterFunc;
 
@@ -23,7 +29,7 @@ class KnapsackScenario extends Scenario {
   @override
   bool shouldIterate(GeneticAlgorithmEngineController controller) {
     _iterations++;
-    return _iterations <= 50;
+    return _iterations <= (maxIterations ?? 50);
 
   }
 
@@ -55,15 +61,15 @@ class KnapsackScenario extends Scenario {
   void iterFunc(GeneticAlgorithmEngineController controller) {
 
     // Sort
-    var sortedPopulation = controller.population.sortByEvaluation();
+    var sortedPopulation = controller.population.removeDuplicates().sortByEvaluation();
 
-    // Add top 150
-    var topPopulation = sortedPopulation.getTop(150);
+    // Add top 50
+    var topPopulation = sortedPopulation.getTop(50);
     controller.addToPopulation(topPopulation);
 
     // Add Recombinations
     topPopulation = sortedPopulation.getTop(250);
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 200; i++) {
       var randPop = topPopulation.randomlySelect(2, random);
       var recomPop = this.recombinate(random, randPop);
       controller.recombinate(randPop, recomPop);
@@ -79,11 +85,12 @@ class KnapsackScenario extends Scenario {
 
   void completionFunc(GeneticAlgorithmEngineController controller) {
     // Propagate population
-    controller.addToPopulation(controller.population);
+    // controller.addToPopulation(controller.population);
+    controller.addToPopulation(controller.population.removeDuplicates().sortByEvaluation().getTop(1));
   }
 
   KnapsackGene generateGene() {
-    print('Generating Gene!');
+    // print('Generating Gene!');
     var sack = new Knapsack(this.capacity);
 
     int maxLoops = 10;
@@ -116,7 +123,7 @@ class KnapsackScenario extends Scenario {
 
     var itemList = itemSet.toList();
 
-    print('Recombinating Gene!');
+    // print('Recombinating Gene!');
     var sack = new Knapsack(this.capacity);
 
     int maxLoops = 10;
